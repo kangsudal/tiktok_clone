@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/features/authentication/password_screen.dart';
 import 'package:tiktok_clone/features/authentication/widgets/form_button.dart';
 
 class EmailScreen extends StatefulWidget {
@@ -35,7 +36,7 @@ class _EmailScreenState extends State<EmailScreen> {
     final regExp = RegExp(
       r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
     );
-    if (regExp.hasMatch(_email)) {
+    if (!regExp.hasMatch(_email)) {
       return "Email not valid.";
     }
     return null;
@@ -69,6 +70,7 @@ class _EmailScreenState extends State<EmailScreen> {
               Gaps.v16,
               TextField(
                 keyboardType: TextInputType.emailAddress,
+                onEditingComplete: _onSubmit,
                 controller: _usernameController,
                 cursorColor: Theme.of(context).primaryColor,
                 decoration: InputDecoration(
@@ -87,7 +89,12 @@ class _EmailScreenState extends State<EmailScreen> {
                 ),
               ),
               Gaps.v16,
-              FormButton(disabled: _email.isEmpty || _isEmailValid != null),//에러가있으면 disabled가 true로 넘겨진다
+              GestureDetector(
+                onTap: _onSubmit,
+                child: FormButton(
+                  disabled: _email.isEmpty || _isEmailValid() != null,
+                ),
+              ), //에러가있으면 disabled가 true로 넘겨진다
             ],
           ),
         ),
@@ -98,5 +105,15 @@ class _EmailScreenState extends State<EmailScreen> {
   void _onScaffoldTap() {
     //focus된것을 모두 unfocus해준다 = 키보드가 사라진다
     FocusScope.of(context).unfocus();
+  }
+
+  void _onSubmit() {
+    if (_isEmailValid() != null || _email.isEmpty)
+      return; //이메일이 유효하지 않거나 비었으면 아무데도 안간다.
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => PasswordScreen(),
+      ),
+    );
   }
 }
