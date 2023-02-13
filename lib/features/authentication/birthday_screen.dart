@@ -14,12 +14,19 @@ class BirthdayScreen extends StatefulWidget {
 }
 
 class _BirthdayScreenState extends State<BirthdayScreen> {
-  DateTime initialDate = DateTime.now();
+  late DateTime initialDate;
+  final int minimumAge = 12; //12세 이용가
   final TextEditingController _birthdayController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    DateTime currentDate = DateTime.now();
+    initialDate = DateTime(
+      currentDate.year - minimumAge,
+      currentDate.month,
+      currentDate.day,
+    );
     _setTextFieldDate(initialDate);
   }
 
@@ -99,7 +106,7 @@ class _BirthdayScreenState extends State<BirthdayScreen> {
           child: CupertinoDatePicker(
             maximumDate: initialDate,
             initialDateTime: initialDate,
-            mode: CupertinoDatePickerMode.date,//시간선택을 제외시키고 날짜선택만 되도록
+            mode: CupertinoDatePickerMode.date, //시간선택을 제외시키고 날짜선택만 되도록
             onDateTimeChanged: _setTextFieldDate,
           ),
         ),

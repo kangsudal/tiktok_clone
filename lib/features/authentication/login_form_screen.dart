@@ -13,7 +13,7 @@ class LoginFormScreen extends StatefulWidget {
 class _LoginFormScreenState extends State<LoginFormScreen> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  Map<String,String> formData={};
+  Map<String, String> formData = {};
 
   void _onSubmitTap() {
     if (_formKey.currentState != null) {
@@ -42,8 +42,8 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
               TextFormField(
                 validator: (val) {},
                 onSaved: (val) {
-                  if(val != null){
-                    formData['email']=val;
+                  if (val != null) {
+                    formData['email'] = val;
                   }
                 },
                 decoration: InputDecoration(
@@ -54,8 +54,8 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
               TextFormField(
                 validator: (val) {},
                 onSaved: (val) {
-                  if(val!=null){
-                    formData['password']=val;
+                  if (val != null) {
+                    formData['password'] = val;
                   }
                 },
                 decoration: InputDecoration(
@@ -65,7 +65,10 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
               Gaps.v28,
               GestureDetector(
                 onTap: _onSubmitTap,
-                child: const FormButton(disabled: false),
+                child: const FormButton(
+                  disabled: false,
+                  text: 'Log in',
+                ),
               ),
             ],
           ),
