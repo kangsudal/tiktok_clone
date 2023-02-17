@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/features/onboarding/tutorial_screen.dart';
 import 'package:tiktok_clone/features/onboarding/widgets/interest_button.dart';
 
 class InterestsScreen extends StatefulWidget {
@@ -26,6 +27,14 @@ class _InterestsScreenState extends State<InterestsScreen> {
         showTitle = false;
       });
     }
+  }
+
+  void _onNextTap() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => TutorialScreen(),
+      ),
+    );
   }
 
   @override
@@ -146,22 +155,25 @@ class _InterestsScreenState extends State<InterestsScreen> {
             right: Sizes.size24,
             bottom: Sizes.size40,
           ),
-          child: Container(
-            padding: EdgeInsets.symmetric(
-              vertical: Sizes.size20,
-            ),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(
-                10,
+          child: GestureDetector(
+            onTap: _onNextTap,
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                vertical: Sizes.size20,
               ),
-              color: Theme.of(context).primaryColor,
-            ),
-            child: Text(
-              "Next",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: Sizes.size20,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(
+                  10,
+                ),
+                color: Theme.of(context).primaryColor,
+              ),
+              child: Text(
+                "Next",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: Sizes.size20,
+                ),
               ),
             ),
           ),
