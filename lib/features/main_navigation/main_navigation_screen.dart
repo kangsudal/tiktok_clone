@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/features/main_navigation/stf_screen.dart';
 import 'package:tiktok_clone/features/main_navigation/widgets/nav_tab.dart';
+import 'package:tiktok_clone/features/main_navigation/widgets/post_video_button.dart';
 
 import '../../constants/sizes.dart';
 
@@ -22,25 +23,38 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     });
   }
 
+  void _onPostVideoButtonTap() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => Scaffold(
+          appBar: AppBar(
+            title: Text('Record Video'),
+          ),
+        ),
+        fullscreenDialog: true,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
           Offstage(
-            offstage: _selectedIndex != 0,//false가 돼야 숨겨짐이 풀어진다
+            offstage: _selectedIndex != 0, //false가 돼야 숨겨짐이 풀어진다
             child: StfScreen(),
           ),
           Offstage(
-            offstage: _selectedIndex != 1,//false가 돼야 숨겨짐이 풀어진다
+            offstage: _selectedIndex != 1, //false가 돼야 숨겨짐이 풀어진다
             child: StfScreen(),
           ),
           Offstage(
-            offstage: _selectedIndex != 3,//false가 돼야 숨겨짐이 풀어진다
+            offstage: _selectedIndex != 3, //false가 돼야 숨겨짐이 풀어진다
             child: StfScreen(),
           ),
           Offstage(
-            offstage: _selectedIndex != 4,//false가 돼야 숨겨짐이 풀어진다
+            offstage: _selectedIndex != 4, //false가 돼야 숨겨짐이 풀어진다
             child: StfScreen(),
           ),
         ],
@@ -67,8 +81,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                 onTap: () => _onTap(1),
               ),
               Gaps.h24,
-              Stack(
-                children: [],
+              GestureDetector(
+                onTap: _onPostVideoButtonTap,
+                child: PostVideoButton(),
               ),
               Gaps.h24,
               NavTab(
