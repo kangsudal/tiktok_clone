@@ -9,6 +9,7 @@ class VideoTimelineScreen extends StatefulWidget {
 }
 
 class _VideoTimelineScreenState extends State<VideoTimelineScreen> {
+  final PageController _pageController = PageController();
   int _itemCount = 4;
   List<Color> colors = [
     Colors.orangeAccent,
@@ -18,6 +19,15 @@ class _VideoTimelineScreenState extends State<VideoTimelineScreen> {
   ];
 
   void _onPageChanged(idx) {
+    //idx: 유저가 가려는 페이지
+    //애니메이션 default값인 Curves.decelerate를 변경
+    _pageController.animateToPage(
+      idx,
+      duration: Duration(milliseconds: 100),
+      curve: Curves.linear,
+    );
+
+    //무한 스크롤링(마지막 페이지에 도달하려할때 4페이지 추가해줌)
     if (idx == _itemCount - 1) {
       _itemCount += 4;
       colors.addAll([
@@ -34,7 +44,9 @@ class _VideoTimelineScreenState extends State<VideoTimelineScreen> {
   @override
   Widget build(BuildContext context) {
     return PageView.builder(
-      scrollDirection: Axis.vertical, //세로로
+      controller: _pageController,
+      scrollDirection: Axis.vertical,
+      //세로로
       itemCount: _itemCount,
       itemBuilder: (BuildContext context, int index) {
         return Container(
