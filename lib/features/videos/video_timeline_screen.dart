@@ -53,7 +53,8 @@ class _VideoTimelineScreenState extends State<VideoTimelineScreen> {
       //세로로
       itemCount: _itemCount,
       itemBuilder: (BuildContext context, int index) {
-        return VideoPost(onVideoFinished:_onVideoFinished);
+        //몇번째 동영상을 보고있는지 알기위해 index를 넘겨준다.
+        return VideoPost(onVideoFinished: _onVideoFinished, index: index);
       },
       onPageChanged: _onPageChanged,
     );
