@@ -21,9 +21,13 @@ class VideoPost extends StatefulWidget {
   State<VideoPost> createState() => _VideoPostState();
 }
 
-class _VideoPostState extends State<VideoPost> {
+class _VideoPostState extends State<VideoPost>
+    with SingleTickerProviderStateMixin {
   final VideoPlayerController _videoPlayerController =
       VideoPlayerController.asset('assets/videos/100floor.mp4');
+  late final AnimationController _animationController;
+  bool _isPaused = false;
+  final Duration _animationDuration = Duration(milliseconds: 200);
 
   void _onVideoChange() {
     if (_videoPlayerController.value.isInitialized) {
@@ -49,6 +53,17 @@ class _VideoPostState extends State<VideoPost> {
   void initState() {
     super.initState();
     _initVideoPlayer();
+    _animationController = AnimationController(
+      vsync: this,
+      lowerBound: 1.0,
+      upperBound: 1.5,
+      value: 1.5,
+      // 시작값의 default 값은 lowerBound인데, value로 다르게 정해줄수있다.
+      duration: _animationDuration,
+    );
+    _animationController.addListener(() {
+      setState(() {});
+    }); //build에게 값(_animationController.value)의 변화를 실시간으로 알려준다.
   }
 
   @override
@@ -69,9 +84,14 @@ class _VideoPostState extends State<VideoPost> {
   void _onTogglePause() {
     if (_videoPlayerController.value.isPlaying) {
       _videoPlayerController.pause();
+      _animationController.reverse(); //upperbound에서 lowerbound로 변화시켜준다.
     } else {
       _videoPlayerController.play();
+      _animationController.forward();
     }
+    setState(() {
+      _isPaused = !_isPaused;
+    });
   }
 
   @override
@@ -96,10 +116,17 @@ class _VideoPostState extends State<VideoPost> {
           Positioned.fill(
             child: IgnorePointer(
               child: Center(
-                child: FaIcon(
-                  FontAwesomeIcons.play,
-                  color: Colors.white,
-                  size: Sizes.size52,
+                child: Transform.scale(
+                  scale: _animationController.value,
+                  child: AnimatedOpacity(
+                    duration: _animationDuration,
+                    opacity: _isPaused ? 1 : 0,
+                    child: FaIcon(
+                      FontAwesomeIcons.play,
+                      color: Colors.white,
+                      size: Sizes.size52,
+                    ),
+                  ),
                 ),
               ),
             ),
