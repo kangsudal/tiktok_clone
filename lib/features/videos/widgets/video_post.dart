@@ -61,9 +61,6 @@ class _VideoPostState extends State<VideoPost>
       // 시작값의 default 값은 lowerBound인데, value로 다르게 정해줄수있다.
       duration: _animationDuration,
     );
-    _animationController.addListener(() {
-      setState(() {});
-    }); //build에게 값(_animationController.value)의 변화를 실시간으로 알려준다.
   }
 
   @override
@@ -116,18 +113,25 @@ class _VideoPostState extends State<VideoPost>
           Positioned.fill(
             child: IgnorePointer(
               child: Center(
-                child: Transform.scale(
-                  scale: _animationController.value,
-                  child: AnimatedOpacity(
-                    duration: _animationDuration,
-                    opacity: _isPaused ? 1 : 0,
-                    child: FaIcon(
-                      FontAwesomeIcons.play,
-                      color: Colors.white,
-                      size: Sizes.size52,
+                child: AnimatedBuilder(
+                    animation: _animationController, //controller가 변할때마다
+                    //AnimatedBuilder의 child는 builder()의 두번째 파라메터(nana)와 같다.
+                    child: AnimatedOpacity(
+                      duration: _animationDuration,
+                      opacity: _isPaused ? 1 : 0,
+                      child: const FaIcon(
+                        FontAwesomeIcons.play,
+                        color: Colors.white,
+                        size: Sizes.size52,
+                      ),
                     ),
-                  ),
-                ),
+                    builder: (context, nana) {
+                      //build를 실행시킨다.
+                      return Transform.scale(
+                        scale: _animationController.value,
+                        child: nana,
+                      );
+                    }),
               ),
             ),
           ),
