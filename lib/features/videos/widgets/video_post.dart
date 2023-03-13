@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/features/videos/widgets/video_button.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -27,24 +29,50 @@ class _VideoPostState extends State<VideoPost>
       VideoPlayerController.asset('assets/videos/100floor.mp4');
   late final AnimationController _animationController;
   bool _isPaused = false;
-  final Duration _animationDuration = Duration(milliseconds: 200);
+  final Duration _animationDuration =
+      Duration(milliseconds: 200); //재생 버튼 클릭했을때의 크기 애니메이션
+  int? _maxLines = 2;
+  TextOverflow _tagsOverflow = TextOverflow.ellipsis;
+  bool _isTagsOpend = false;
+  String _openAndCloseTagText = '자세히 보기';
+
+  void _onTagsOpenAndClose(){
+    if(_isTagsOpend==true){
+      //열려있으면 닫아야한다.
+      _isTagsOpend = false;
+      _maxLines = 2;
+      _tagsOverflow = TextOverflow.ellipsis;
+      _openAndCloseTagText = '자세히 보기';
+    }else{
+      //닫혀있으면 열려야한다.
+      _isTagsOpend = true;
+      _maxLines = null;
+      _tagsOverflow = TextOverflow.visible;
+      _openAndCloseTagText = '숨기기';
+    }
+    setState(() {
+
+    });
+  }
 
   void _onVideoChange() {
     if (_videoPlayerController.value.isInitialized) {
       //전체길이 == 현재 사용자의 동영상 위치
       if (_videoPlayerController.value.duration ==
           _videoPlayerController.value.position) {
-        widget.onVideoFinished();
+        widget.onVideoFinished(); //동영상이 끝났을때의 함수를 불러온다.
       }
     }
   }
 
   void _initVideoPlayer() async {
     await _videoPlayerController.initialize(); //initialize를 해줘야한다.
+    await _videoPlayerController.setLooping(true);
     setState(() {
       //build method가 VideoPlayerController가 initialize된것과 플레이 된것을 알게해주려고
     });
     _videoPlayerController.addListener(() {
+      //controller의 변화를 감지한다.
       _onVideoChange();
     });
   }
@@ -133,6 +161,77 @@ class _VideoPostState extends State<VideoPost>
                       );
                     }),
               ),
+            ),
+          ),
+          Positioned(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '@kangsudal',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: Sizes.size20,
+                    color: Colors.white,
+                  ),
+                ),
+                Gaps.v10,
+                Text(
+                  '100 floor in Busan',
+                  style: TextStyle(
+                    fontSize: Sizes.size16,
+                    color: Colors.white,
+                  ),
+                ),
+                Gaps.v7,
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Container(
+                      width: 200,
+                      padding: EdgeInsets.only(right: 8),
+                      child: Text(
+                        '#고소공포증 #brave #aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: Sizes.size16,
+                          color: Colors.white,
+                        ),
+                        maxLines: _maxLines,
+                        overflow: _tagsOverflow,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: _onTagsOpenAndClose,
+                      child: Text(
+                        _openAndCloseTagText,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: Sizes.size16,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            left: 10,
+            bottom: 20,
+          ),
+          Positioned(
+            right: 10,
+            bottom: 20,
+            child: Column(
+              children: [
+                CircleAvatar(),
+                Gaps.v20,
+                VideoButton(icon: FontAwesomeIcons.solidHeart, text: '80.8k',),
+                Gaps.v20,
+                VideoButton(icon: FontAwesomeIcons.solidComment, text: '580'),
+                Gaps.v20,
+                VideoButton(icon: FontAwesomeIcons.share, text: '580'),
+              ],
             ),
           ),
         ],
