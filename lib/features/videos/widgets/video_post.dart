@@ -36,23 +36,21 @@ class _VideoPostState extends State<VideoPost>
   bool _isTagsOpend = false;
   String _openAndCloseTagText = '자세히 보기';
 
-  void _onTagsOpenAndClose(){
-    if(_isTagsOpend==true){
+  void _onTagsOpenAndClose() {
+    if (_isTagsOpend == true) {
       //열려있으면 닫아야한다.
       _isTagsOpend = false;
       _maxLines = 2;
       _tagsOverflow = TextOverflow.ellipsis;
       _openAndCloseTagText = '자세히 보기';
-    }else{
+    } else {
       //닫혀있으면 열려야한다.
       _isTagsOpend = true;
       _maxLines = null;
       _tagsOverflow = TextOverflow.visible;
       _openAndCloseTagText = '숨기기';
     }
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   void _onVideoChange() {
@@ -101,7 +99,9 @@ class _VideoPostState extends State<VideoPost>
     //한번에 하나씩만 재생해주기위해 만든 method
     //info.visibleFraction: widget이 얼만큼 보이는지 나타낸다. 0~1
     //비디오가 100프로 보이고 아직 재생중이 아니면 재생해준다.
-    if (info.visibleFraction == 1 && !_videoPlayerController.value.isPlaying) {
+    if (info.visibleFraction == 1 &&
+        !_isPaused &&
+        !_videoPlayerController.value.isPlaying) {
       _videoPlayerController.play();
     }
   }
@@ -226,7 +226,10 @@ class _VideoPostState extends State<VideoPost>
               children: [
                 CircleAvatar(),
                 Gaps.v20,
-                VideoButton(icon: FontAwesomeIcons.solidHeart, text: '80.8k',),
+                VideoButton(
+                  icon: FontAwesomeIcons.solidHeart,
+                  text: '80.8k',
+                ),
                 Gaps.v20,
                 VideoButton(icon: FontAwesomeIcons.solidComment, text: '580'),
                 Gaps.v20,
