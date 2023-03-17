@@ -44,6 +44,7 @@ class _VideoPostState extends State<VideoPost>
     }
     //댓글보기 버튼을 클릭하면 바텀sheet가 올라온다.
     await showModalBottomSheet(
+      isScrollControlled: true, //bottom sheet의 사이즈를 바꿀 수 있게한다.
       backgroundColor: Colors.transparent,
       context: context,
       builder: (context) => VideoComments(),
