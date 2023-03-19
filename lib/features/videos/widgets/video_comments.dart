@@ -15,6 +15,7 @@ class VideoComments extends StatefulWidget {
 
 class _VideoCommentsState extends State<VideoComments> {
   bool _isWriting = false;
+  ScrollController _scrollController = ScrollController();
 
   void _onClosePressed() {
     Navigator.of(context).pop();
@@ -36,6 +37,7 @@ class _VideoCommentsState extends State<VideoComments> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+    final commentHeight = Sizes.size44;
     return Container(
       height: screenSize.height * 0.7, //ModalBottomSheet의 크기가 화면의 세로 70%가 되도록
       clipBehavior: Clip.hardEdge,
@@ -68,63 +70,69 @@ class _VideoCommentsState extends State<VideoComments> {
           child: Stack(
             //Stack을 준 이유는 하단에 Positioned된 댓글TextField가 필요하기때문이다.
             children: [
-              ListView.separated(
-                padding: EdgeInsets.symmetric(
-                  vertical: Sizes.size10,
-                  horizontal: Sizes.size16,
-                ),
-                itemCount: 10,
-                itemBuilder: (context, idx) {
-                  return Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    //댓글 길이가 길어져도 썸네일이 가운데가 아니라 위로 갈 수 있게
-                    children: [
-                      CircleAvatar(
-                        radius: 18,
-                      ),
-                      Gaps.h10, //썸네일과 글자사이 간격
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+              Scrollbar(
+                controller: _scrollController,
+                child: ListView.separated(
+                  controller: _scrollController,
+                  padding: EdgeInsets.only(
+                    top: Sizes.size10,
+                    bottom: commentHeight+Sizes.size20,
+                    left: Sizes.size16,
+                    right: Sizes.size16,
+                  ),
+                  itemCount: 10,
+                  itemBuilder: (context, idx) {
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      //댓글 길이가 길어져도 썸네일이 가운데가 아니라 위로 갈 수 있게
+                      children: [
+                        CircleAvatar(
+                          radius: 18,
+                        ),
+                        Gaps.h10, //썸네일과 글자사이 간격
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'I am a comment',
+                                style: TextStyle(
+                                  color: Colors.grey.shade500,
+                                  fontSize: Sizes.size14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Gaps.v3,
+                              Text(
+                                'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbcccccccccccccccccccccccccccddddddddddd',
+                              ),
+                            ],
+                          ),
+                        ),
+                        Gaps.h10, //댓글과 좋아요 버튼 사이 간격
+                        Column(
                           children: [
+                            FaIcon(
+                              FontAwesomeIcons.heart,
+                              size: Sizes.size20,
+                              color: Colors.grey.shade500,
+                            ),
+                            Gaps.v2,
                             Text(
-                              'I am a comment',
+                              '52.2K',
                               style: TextStyle(
                                 color: Colors.grey.shade500,
                                 fontSize: Sizes.size14,
-                                fontWeight: FontWeight.bold,
                               ),
-                            ),
-                            Gaps.v3,
-                            Text(
-                              'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbcccccccccccccccccccccccccccddddddddddd',
                             ),
                           ],
                         ),
-                      ),
-                      Gaps.h10, //댓글과 좋아요 버튼 사이 간격
-                      Column(
-                        children: [
-                          FaIcon(
-                            FontAwesomeIcons.heart,
-                            size: Sizes.size20,
-                            color: Colors.grey.shade500,
-                          ),
-                          Gaps.v2,
-                          Text(
-                            '52.2K',
-                            style: TextStyle(
-                              color: Colors.grey.shade500,
-                              fontSize: Sizes.size14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  );
-                },
-                separatorBuilder: (BuildContext context, int index) =>
-                    Gaps.v20, //댓글들 사이의 간격
+                      ],
+                    );
+                  },
+                  separatorBuilder: (BuildContext context, int index) =>
+                      Gaps.v20, //댓글들 사이의 간격
+                ),
               ),
               Positioned(
                 bottom: 0, //텍스트필드를 하단에 고정
@@ -142,7 +150,7 @@ class _VideoCommentsState extends State<VideoComments> {
                         Gaps.h10,
                         Expanded(
                           child: SizedBox(
-                            height: Sizes.size44,
+                            height: commentHeight,
                             //TextField의 contentPadding의 vertical대신 SizedBox로 정해주는게 좋다.
                             child: TextField(
                               onTap: _onStartWriting,
