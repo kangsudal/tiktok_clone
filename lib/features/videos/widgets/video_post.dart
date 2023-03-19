@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/videos/widgets/video_button.dart';
+import 'package:tiktok_clone/features/videos/widgets/video_comments.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -36,23 +37,35 @@ class _VideoPostState extends State<VideoPost>
   bool _isTagsOpend = false;
   String _openAndCloseTagText = '자세히 보기';
 
-  void _onTagsOpenAndClose(){
-    if(_isTagsOpend==true){
+  void _onCommentsTap(BuildContext context) async {
+    if (_videoPlayerController.value.isPlaying) {
+      //댓글창을 열었을때 뒤에 동영상이 멈추도록 한다.
+      _onTogglePause();
+    }
+    //댓글보기 버튼을 클릭하면 바텀sheet가 올라온다.
+    await showModalBottomSheet(
+      isScrollControlled: true, //bottom sheet의 사이즈를 바꿀 수 있게한다.
+      backgroundColor: Colors.transparent,
+      context: context,
+      builder: (context) => VideoComments(),
+    );
+  }
+
+  void _onTagsOpenAndClose() {
+    if (_isTagsOpend == true) {
       //열려있으면 닫아야한다.
       _isTagsOpend = false;
       _maxLines = 2;
       _tagsOverflow = TextOverflow.ellipsis;
       _openAndCloseTagText = '자세히 보기';
-    }else{
+    } else {
       //닫혀있으면 열려야한다.
       _isTagsOpend = true;
       _maxLines = null;
       _tagsOverflow = TextOverflow.visible;
       _openAndCloseTagText = '숨기기';
     }
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   void _onVideoChange() {
@@ -101,18 +114,20 @@ class _VideoPostState extends State<VideoPost>
     //한번에 하나씩만 재생해주기위해 만든 method
     //info.visibleFraction: widget이 얼만큼 보이는지 나타낸다. 0~1
     //비디오가 100프로 보이고 아직 재생중이 아니면 재생해준다.
-    if (info.visibleFraction == 1 && !_videoPlayerController.value.isPlaying) {
+    if (info.visibleFraction == 1 &&
+        !_isPaused &&
+        !_videoPlayerController.value.isPlaying) {
       _videoPlayerController.play();
     }
   }
 
   void _onTogglePause() {
     if (_videoPlayerController.value.isPlaying) {
-      _videoPlayerController.pause();
-      _animationController.reverse(); //upperbound에서 lowerbound로 변화시켜준다.
+      _videoPlayerController.pause(); //동영상이 멈춘다.
+      _animationController.reverse(); //애니메이션 : upperbound에서 lowerbound로 변화시켜준다.
     } else {
-      _videoPlayerController.play();
-      _animationController.forward();
+      _videoPlayerController.play(); //동영상이 재생된다.
+      _animationController.forward(); //애니메이션: 재생버튼이 커지는 애니메이션
     }
     setState(() {
       _isPaused = !_isPaused;
@@ -226,9 +241,16 @@ class _VideoPostState extends State<VideoPost>
               children: [
                 CircleAvatar(),
                 Gaps.v20,
-                VideoButton(icon: FontAwesomeIcons.solidHeart, text: '80.8k',),
+                VideoButton(
+                  icon: FontAwesomeIcons.solidHeart,
+                  text: '80.8k',
+                ),
                 Gaps.v20,
-                VideoButton(icon: FontAwesomeIcons.solidComment, text: '580'),
+                GestureDetector(
+                  onTap: () => _onCommentsTap(context),
+                  child: VideoButton(
+                      icon: FontAwesomeIcons.solidComment, text: '580'),
+                ),
                 Gaps.v20,
                 VideoButton(icon: FontAwesomeIcons.share, text: '580'),
               ],
