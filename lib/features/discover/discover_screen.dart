@@ -49,7 +49,24 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
         ),
         body: TabBarView(
           children: [
-            for (var tab in tabs)
+            GridView.builder(
+              itemCount: 20,
+              padding: EdgeInsets.all(Sizes.size6),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: Sizes.size10,
+                mainAxisSpacing: Sizes.size10,
+                childAspectRatio: 9 / 16,
+              ),
+              itemBuilder: (context, idx) => Container(
+                color: Colors.teal,
+                child: Center(
+                  child: Text('$idx'),
+                ),
+              ),
+            ),
+            for (var tab in tabs.skip(1))
+              //skip(1): 첫번째 위젯으로 GridView가 와야하기때문에 Center(child:Text("top"))은 제외시킴.
               Center(
                 child: Text(tab),
               ),
