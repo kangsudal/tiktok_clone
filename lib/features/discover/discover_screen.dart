@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
@@ -21,15 +22,43 @@ class DiscoverScreen extends StatefulWidget {
 }
 
 class _DiscoverScreenState extends State<DiscoverScreen> {
+  TextEditingController _controller = TextEditingController(text: 'hello');
+
+  void _onSearchChanged(String val) {
+    //글자가 바뀔때마다
+  }
+
+  void _onSearchSubmitted(String val) {
+    //검색 버튼을 눌렀을때
+    print("검색버튼:$val");
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onTap(int idx) {
+    FocusScope.of(context).unfocus();
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: tabs.length,
       child: Scaffold(
+        resizeToAvoidBottomInset: false, //텍스트필드를 선택했을때 아래 공백이 생기는것을 막아준다.
         appBar: AppBar(
-          title: Text("Discover"),
+          title: CupertinoSearchTextField(
+            controller: _controller,
+            onChanged: _onSearchChanged, //글자가 바뀔때마다
+            onSubmitted: _onSearchSubmitted, //검색 버튼을 눌렀을때
+          ), //ios 스타일의 검색 텍스트 필드
           elevation: 1, //AppBar에 실선 넣기
           bottom: TabBar(
+            onTap: _onTap,
+            //Tab을 누르면 키보드가 사라지게 만듬
             isScrollable: true,
             unselectedLabelColor: Colors.grey.shade500,
             labelColor: Colors.black,
@@ -52,6 +81,8 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
         body: TabBarView(
           children: [
             GridView.builder(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              //드래그했을때 키보드가 사라지게 한다.
               itemCount: 20,
               padding: EdgeInsets.all(Sizes.size6),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -63,14 +94,21 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
               ),
               itemBuilder: (context, idx) => Column(
                 children: [
-                  AspectRatio(
-                    aspectRatio: 9 / 16,
-                    child: FadeInImage.assetNetwork(
-                      //이미지를 불러오기전에 placeholder 이미지를 보여주고 FadeIn해준다.
-                      fit: BoxFit.cover,
-                      placeholder: 'assets/images/placeholder.jpg',
-                      image:
-                          'https://images.unsplash.com/photo-1679335649136-bd9db9e89bef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1935&q=80',
+                  Container(
+                    clipBehavior: Clip.hardEdge,
+                    //이미지가 Container를 overflow해주기때문에 BoxDecoration의 BorderRadius가 적용이안된다. 그래서 Clip.hardEdge가 필요하다.
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(Sizes.size6),
+                    ),
+                    child: AspectRatio(
+                      aspectRatio: 9 / 16,
+                      child: FadeInImage.assetNetwork(
+                        //이미지를 불러오기전에 placeholder 이미지를 보여주고 FadeIn해준다.
+                        fit: BoxFit.cover,
+                        placeholder: 'assets/images/placeholder.jpg',
+                        image:
+                            'https://images.unsplash.com/photo-1679335649136-bd9db9e89bef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1935&q=80',
+                      ),
                     ),
                   ),
                   Gaps.v10,
