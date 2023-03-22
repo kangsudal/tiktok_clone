@@ -119,6 +119,10 @@ class _VideoPostState extends State<VideoPost>
         !_videoPlayerController.value.isPlaying) {
       _videoPlayerController.play();
     }
+    if (_videoPlayerController.value.isPlaying && info.visibleFraction == 0) {
+      //동영상이 재생중인데 discover같이 다른탭을 눌렀을때, 화면이 보이지 않을때
+      _onTogglePause(); //동영상을 일시정지시킨다.
+    }
   }
 
   void _onTogglePause() {

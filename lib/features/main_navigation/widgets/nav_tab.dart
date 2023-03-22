@@ -8,6 +8,7 @@ class NavTab extends StatelessWidget {
   final IconData icon;
   final IconData selectedIcon;
   final Function onTap;
+  final int selectedIndex;
 
   const NavTab({
     Key? key,
@@ -16,6 +17,7 @@ class NavTab extends StatelessWidget {
     required this.icon,
     required this.selectedIcon,
     required this.onTap,
+    required this.selectedIndex,
   }) : super(key: key);
 
   @override
@@ -25,7 +27,8 @@ class NavTab extends StatelessWidget {
       child: GestureDetector(
         onTap: () => onTap(),
         child: Container(
-          color: Colors.black,
+          color: selectedIndex == 0 ? Colors.black : Colors.white,
+          // Home 탭이 아니면 NavTab 배경 색을 흰색으로
           child: AnimatedOpacity(
             opacity: isSelected ? 1 : 0.6,
             duration: Duration(milliseconds: 300),
@@ -34,14 +37,18 @@ class NavTab extends StatelessWidget {
               children: [
                 FaIcon(
                   isSelected ? selectedIcon : icon,
-                  color: Colors.white,
+                  color: selectedIndex == 0
+                      ? Colors.white
+                      : Colors.black, // Home 탭이 아니면 아이콘색상을 black으로
                 ),
                 Gaps.v5,
                 Text(
                   text,
                   style: TextStyle(
-                    color: Colors.white,
-                  ),
+                      color: selectedIndex == 0
+                          ? Colors.white
+                          : Colors.black // Home 탭이 아니면 아이콘 밑에 Text를 black으로
+                      ),
                 ),
               ],
             ),
