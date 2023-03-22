@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/features/discover/MyCupertinoSearchTextField.dart';
 
 final tabs = [
   'Top',
@@ -50,7 +51,8 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
       child: Scaffold(
         resizeToAvoidBottomInset: false, //텍스트필드를 선택했을때 아래 공백이 생기는것을 막아준다.
         appBar: AppBar(
-          title: CupertinoSearchTextField(
+          title: MyCupertinoSearchTextField(
+            // CupertinoSearchTextField(
             controller: _controller,
             onChanged: _onSearchChanged, //글자가 바뀔때마다
             onSubmitted: _onSearchSubmitted, //검색 버튼을 눌렀을때
