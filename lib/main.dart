@@ -31,6 +31,8 @@ class TikTokApp extends StatelessWidget {
           ),
           centerTitle: true,
         ),
+        splashColor: Colors.transparent, //long press했을때 잉크번짐 효과가 사라지게한다.
+        // highlightColor: Colors.transparent,//짧은 터치를 했을때도 잉크 효과가 사라진다.
       ),
       home: MainNavigationScreen(), //const SignUpScreen(),
     );
