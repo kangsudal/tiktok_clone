@@ -9,8 +9,22 @@ class ActivityScreen extends StatefulWidget {
   State<ActivityScreen> createState() => _ActivityScreenState();
 }
 
-class _ActivityScreenState extends State<ActivityScreen> {
+class _ActivityScreenState extends State<ActivityScreen>
+    with SingleTickerProviderStateMixin {
   final List<String> _notifications = List.generate(20, (index) => '${index}h');
+
+  //#1. 애니메이션 정보를 가지고있는 AnimationController를 생성
+  late final AnimationController _animationController = AnimationController(
+    vsync: this,
+    duration: Duration(
+      milliseconds: 200, //애니메이션 속도
+    ),
+  ); //Animation을 만들기위해 컨트롤러 생성/late를 꼭 붙여줘야한다. 아니면 initState에서 생성해줘야한다.
+
+  //#실제 애니메이션인 Animation을 생성
+  //AnimationController를 통해 Tween을 animation하겠다. _animation과 _animationController를 연결시켜주었다.
+  late final Animation<double> _animation = Tween(begin: 0.0, end: 0.5)
+      .animate(_animationController); //1.0: 1 turn 360도, 0.5: half turn 180도
 
   void _onDismissed(String notification) {
     //dismiss된 notification을 받는다.
@@ -20,11 +34,38 @@ class _ActivityScreenState extends State<ActivityScreen> {
     });
   }
 
+  void _onTitleTap() {
+    //#3. forward 실행
+    //애니메이션을 play한다
+    if (_animationController.isCompleted) {
+      //애니메이션이 끝나면
+      _animationController.reverse(); //반대로 돈다.
+    }else {
+      _animationController.forward(); //정상적으로 돈다
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('All activity'),
+        title: GestureDetector(
+          onTap: _onTitleTap,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('All activity'),
+              Gaps.h4,
+              RotationTransition(
+                turns: _animation, //animation 적용
+                child: FaIcon(
+                  FontAwesomeIcons.chevronDown,
+                  size: 14,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
       body: ListView(
         //ListView 전체에 padding을 줄 수 있지만 Dismissible과 ListTile의 모양을위해 New Text에 패딩을 주기로했다.
