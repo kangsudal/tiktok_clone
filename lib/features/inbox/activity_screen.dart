@@ -46,7 +46,7 @@ class _ActivityScreenState extends State<ActivityScreen>
   late final AnimationController _animationController = AnimationController(
     vsync: this,
     duration: Duration(
-      milliseconds: 200, //애니메이션 속도
+      milliseconds: 300, //애니메이션 속도
     ),
   ); //Animation을 만들기위해 컨트롤러 생성/late를 꼭 붙여줘야한다. 아니면 initState에서 생성해줘야한다.
 
@@ -95,6 +95,12 @@ class _ActivityScreenState extends State<ActivityScreen>
       //애니메이션이 끝나는것을 기다려주기 위해 _animattionController.reverse()를 await해준다.
       _showBarrier = !_showBarrier;
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _animationController.dispose();
   }
 
   @override
