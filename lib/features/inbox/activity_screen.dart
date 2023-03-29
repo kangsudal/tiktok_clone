@@ -40,6 +40,8 @@ class _ActivityScreenState extends State<ActivityScreen>
     }
   ];
 
+  bool _showBarrier = false; //위젯트리에서 AnimatedModalBarrier를 보여주고 숨기는 역할
+
   //#1. 애니메이션 정보를 가지고있는 AnimationController를 생성
   late final AnimationController _animationController = AnimationController(
     vsync: this,
@@ -59,6 +61,12 @@ class _ActivityScreenState extends State<ActivityScreen>
     end: Offset(0, 0),
   ).animate(_animationController);
 
+  //색깔을 바꾸는 애니메이션
+  late final Animation<Color?> _barrierAnimation = ColorTween(
+    begin: Colors.transparent,
+    end: Colors.black45,
+  ).animate(_animationController);
+
   void _onDismissed(String notification) {
     //dismiss된 notification을 받는다.
     setState(() {
@@ -67,15 +75,26 @@ class _ActivityScreenState extends State<ActivityScreen>
     });
   }
 
-  void _onTitleTap() {
+  void _toggleAnimations() async {
+    /*
+    AppBar를 누르거나 AnimatedModalBarrier를 눌렀을때 실행되는 함수
+     */
     //#3. forward 실행
     //애니메이션을 play한다
     if (_animationController.isCompleted) {
       //애니메이션이 끝나면
-      _animationController.reverse(); //반대로 돈다. / panel이 닫힌다. / end->begin
+      await _animationController.reverse(); //반대로 돈다. / panel이 닫힌다. / end->begin
     } else {
       _animationController.forward(); //정상적으로 돈다 / panel이 열린다. / begin->end
     }
+
+    setState(() {
+      //위젯트리에서 AnimatedModalBarrier를 보여주고 숨기는 역할
+      //이 값이 바뀔때 build method를 실행시킨다.
+      //바로 rebuild되어 AnimatedModalBarrier가 바로 사라지지 않게 하기위해서,
+      //애니메이션이 끝나는것을 기다려주기 위해 _animattionController.reverse()를 await해준다.
+      _showBarrier = !_showBarrier;
+    });
   }
 
   @override
@@ -83,7 +102,7 @@ class _ActivityScreenState extends State<ActivityScreen>
     return Scaffold(
       appBar: AppBar(
         title: GestureDetector(
-          onTap: _onTitleTap,
+          onTap: _toggleAnimations,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -204,12 +223,20 @@ class _ActivityScreenState extends State<ActivityScreen>
                 ),
             ],
           ),
+          if (_showBarrier == true)
+            AnimatedModalBarrier(
+              /*
+            화면이 터치가 안되고 색이 바뀌게 만들어준다. Panel이 내려왔을때 ListTile 좌우로 슬라이드 안되게
+             */
+              color: _barrierAnimation,
+              dismissible: true,
+              onDismiss: _toggleAnimations,
+            ),
           SlideTransition(
             position: _panelAnimation,
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.white,
-                border: Border.all(),
                 borderRadius: BorderRadius.vertical(
                   bottom: Radius.circular(10),
                 ),
