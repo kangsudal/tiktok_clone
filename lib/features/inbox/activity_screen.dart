@@ -110,6 +110,7 @@ class _ActivityScreenState extends State<ActivityScreen>
         title: GestureDetector(
           onTap: _toggleAnimations,
           child: Row(
+            mainAxisSize: MainAxisSize.min,//All activity가 가운데로 오게하기위해서 전체 공간을 차지하는것을 최소화 해준다
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text('All activity'),
