@@ -9,6 +9,21 @@ class ChatDetailScreen extends StatefulWidget {
 }
 
 class _ChatDetailScreenState extends State<ChatDetailScreen> {
+  //우측에 스크롤이 생기도록 해준다.
+  final ScrollController _scrollController = ScrollController();
+  final TextEditingController _textEditingController = TextEditingController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onBodyTap() {
+    //body를 누르면 TextField의 focus가 사라진다.
+    FocusScope.of(context).unfocus();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,90 +68,146 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         ),
       ),
       //body에 Stack을 감싸는 이유는 TextField에 Positioned를 넣어주기 위해서이다.
-      body: Stack(
-        children: [
-          ListView.separated(
-            itemBuilder: (context, idx) {
-              final isMine = idx % 2 == 0;
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                //Row로 감싸준 이유는 Align을 주기위해서다.
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment:
-                      isMine ? MainAxisAlignment.end : MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(15),
-                      decoration: BoxDecoration(
-                        color:
-                            isMine ? Colors.blueAccent : Colors.grey.shade400,
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(15),
-                          topLeft: Radius.circular(15),
-                          bottomLeft:
-                              isMine ? Radius.circular(15) : Radius.circular(3),
-                          bottomRight:
-                              //not Mine이면 우측 하단에 borderRadius를 크게준다.
-                              !isMine
+      body: GestureDetector(
+        onTap: _onBodyTap,
+        child: Stack(
+          children: [
+            Scrollbar(
+              controller: _scrollController,
+              child: ListView.separated(
+                controller: _scrollController,
+                //하단의 TextField가 가리고있는 본문을 위하여 padding을 준다.
+                padding: EdgeInsets.only(bottom: 100),
+                itemBuilder: (context, idx) {
+                  final isMine = idx % 2 == 0;
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    //Row로 감싸준 이유는 Align을 주기위해서다.
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: isMine
+                          ? MainAxisAlignment.end
+                          : MainAxisAlignment.start,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(15),
+                          decoration: BoxDecoration(
+                            color: isMine
+                                ? Colors.blueAccent
+                                : Colors.grey.shade400,
+                            borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(15),
+                              topLeft: Radius.circular(15),
+                              bottomLeft: isMine
                                   ? Radius.circular(15)
                                   : Radius.circular(3),
+                              bottomRight:
+                                  //not Mine이면 우측 하단에 borderRadius를 크게준다.
+                                  !isMine
+                                      ? Radius.circular(15)
+                                      : Radius.circular(3),
+                            ),
+                          ),
+                          child: Text(
+                            "안녕",
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
-                      ),
-                      child: Text(
-                        "안녕",
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
+                      ],
                     ),
-                  ],
+                  );
+                },
+                separatorBuilder: (context, idx) => SizedBox(
+                  height: 10,
                 ),
-              );
-            },
-            separatorBuilder: (context, idx) => SizedBox(
-              height: 10,
+                itemCount: 20,
+              ),
             ),
-            itemCount: 20,
-          ),
-          Positioned(
-            bottom: 0,
-            //Positioned에는 width를 넣어줘야한다.
-            width: MediaQuery.of(context).size.width,
-            child: BottomAppBar(
-              color: Colors.grey.shade50,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    //TextField에 width를 주어야 한다.
-                    Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: "Send a message...",
+            Positioned(
+              bottom: 0,
+              //Positioned에는 width를 넣어줘야한다.
+              width: MediaQuery.of(context).size.width,
+              child: BottomAppBar(
+                color: Colors.grey.shade100,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    top: 8.0,
+                    left: 12,
+                    right: 12,
+                    bottom: 20,
+                  ),
+                  child: Row(
+                    children: [
+                      //TextField에 width를 주어야 한다.
+                      Expanded(
+                        child: SizedBox(
+                          height: 50,
+                          child: TextField(
+                            controller: _textEditingController,
+                            decoration: InputDecoration(
+                              hintText: "Send a message...",
+                              hintStyle: TextStyle(
+                                color: Colors.grey,
+                              ),
+                              filled: true,
+                              fillColor: Colors.white,
+                              // filled: true를 해줘야 적용이된다.
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide.none,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20),
+                                  topRight: Radius.circular(20),
+                                  bottomLeft: Radius.circular(20),
+                                ),
+                              ),
+                              contentPadding: EdgeInsets.symmetric(
+                                //horizontal을 주니깐 수직으로 가운데 안맞춰지던게 맞춰졌다.
+                                horizontal: 10,
+                              ),
+                              suffixIcon: IconButton(
+                                onPressed: () {},
+                                icon: FaIcon(
+                                  FontAwesomeIcons.faceLaugh,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                            textInputAction: TextInputAction.newline,
+                            // 엔터키가 되려면 expands, minLines, maxLines 설정이 세트로 되어야한다.
+                            expands: true,
+                            minLines: null,
+                            maxLines: null,
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Container(
-                      padding: EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.grey.shade400,
+                      SizedBox(
+                        width: 10,
                       ),
-                      child: FaIcon(
-                        FontAwesomeIcons.solidPaperPlane,
-                        color: Colors.white,
+                      GestureDetector(
+                        onTap: () {
+                          _textEditingController.clear();
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.grey.shade400,
+                          ),
+                          child: FaIcon(
+                            FontAwesomeIcons.solidPaperPlane,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
