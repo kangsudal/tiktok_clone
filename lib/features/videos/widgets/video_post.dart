@@ -111,6 +111,7 @@ class _VideoPostState extends State<VideoPost>
   }
 
   void _onVisibilityChanged(VisibilityInfo info) {
+    if (!mounted) return; //무슨 버그를 고치는거라고하는데 이해가 잘 안됐음.
     //한번에 하나씩만 재생해주기위해 만든 method
     //info.visibleFraction: widget이 얼만큼 보이는지 나타낸다. 0~1
     //비디오가 100프로 보이고 아직 재생중이 아니면 재생해준다.
