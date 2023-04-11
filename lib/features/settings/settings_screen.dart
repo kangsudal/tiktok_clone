@@ -1,7 +1,22 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  bool _notifications = false;
+
+  void _onNotificationsChanged(bool? newCheckValue) {
+    if (newCheckValue == null) return;
+    setState(() {
+      _notifications = newCheckValue;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,6 +26,34 @@ class SettingsScreen extends StatelessWidget {
       ),
       body: ListView(
         children: [
+          Switch.adaptive(
+              value: _notifications, onChanged: _onNotificationsChanged),
+          //os에 따라 렌더링한다.
+          CupertinoSwitch(
+              value: _notifications, onChanged: _onNotificationsChanged),
+          Switch(value: _notifications, onChanged: _onNotificationsChanged),
+          SwitchListTile(
+            value: _notifications,
+            onChanged: _onNotificationsChanged,
+            title: Text(
+              'Enable notifications',
+            ),
+          ),
+          //이것을 사용하는것을 추천한다고함
+          SwitchListTile.adaptive(
+            value: _notifications,
+            onChanged: _onNotificationsChanged,
+            title: Text(
+              'This is SwitchListTile.adaptive',
+            ),
+          ),
+          Checkbox(value: _notifications, onChanged: _onNotificationsChanged),
+          CheckboxListTile(
+            value: _notifications,
+            onChanged: _onNotificationsChanged,
+            title: Text('Enable notifications'),
+            activeColor: Colors.black,
+          ),
           ListTile(
             title: Text('What is your birthday?'),
             onTap: () async {
@@ -24,6 +67,7 @@ class SettingsScreen extends StatelessWidget {
                 context: context,
                 initialTime: TimeOfDay.now(),
               );
+              //기간선택
               final booking = await showDateRangePicker(
                   context: context,
                   firstDate: DateTime(1980),
