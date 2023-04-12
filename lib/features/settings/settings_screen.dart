@@ -173,6 +173,45 @@ class _SettingsScreenState extends State<SettingsScreen> {
               );
             },
           ),
+          ListTile(
+            title: Text(
+              'Log out (iOS/bottom)',
+              style: TextStyle(
+                color: Colors.red,
+              ),
+            ),
+            onTap: () {
+              //showCupertinoModalPopup은 AlertDialog에도 쓸 수 있다. dismiss가 가능하다.
+              showCupertinoModalPopup(
+                context: context,
+                builder: (context) {
+                  //CupertinoActionSheet는 showCupertinoModalPopup과 써야한다. showCupertinoDialog랑 쓰면 위로올라가서 별로다.
+                  return CupertinoActionSheet(
+                    title: Text('Do you want to log out?'),
+                    message: Text('nooo'),
+                    actions: [
+                      CupertinoActionSheetAction(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(
+                          'Yes',
+                        ),
+                      ),
+                      CupertinoActionSheetAction(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('No'),
+                        isDestructiveAction: true,
+                        isDefaultAction: true,
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
         ],
       ),
     );
