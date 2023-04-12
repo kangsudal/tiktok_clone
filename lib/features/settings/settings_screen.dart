@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -106,6 +107,72 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     "All rights is reserved. Please don't copy me."),
           ),
           AboutListTile(),
+          ListTile(
+            title: Text(
+              'Log out (iOS)',
+              style: TextStyle(
+                color: Colors.red,
+              ),
+            ),
+            onTap: () {
+              showCupertinoDialog(
+                context: context,
+                builder: (context) => CupertinoAlertDialog(
+                  title: Text('Are you sure?'),
+                  content: Text("Don't go ~"),
+                  actions: [
+                    CupertinoDialogAction(
+                      child: Text('No'),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                    CupertinoDialogAction(
+                      child: Text('Yes'),
+                      isDestructiveAction: true,
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+          ListTile(
+            title: Text(
+              'Log out (Android)',
+              style: TextStyle(color: Colors.red),
+            ),
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  icon: FaIcon(FontAwesomeIcons.handshakeSimple),
+                  title: Text('Are you sure?'),
+                  content: Text('Dont go~'),
+                  actions: [
+                    TextButton(
+                      child: Text('Yes'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    TextButton(
+                      child: Text('No'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      icon: FaIcon(
+                        FontAwesomeIcons.personRunning,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
         ],
       ),
     );
