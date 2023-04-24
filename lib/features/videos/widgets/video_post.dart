@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
@@ -30,6 +31,7 @@ class _VideoPostState extends State<VideoPost>
       VideoPlayerController.asset('assets/videos/100floor.mp4');
   late final AnimationController _animationController;
   bool _isPaused = false;
+  bool _isMuted = true;
   final Duration _animationDuration =
       Duration(milliseconds: 200); //재생 버튼 클릭했을때의 크기 애니메이션
   int? _maxLines = 2;
@@ -81,12 +83,16 @@ class _VideoPostState extends State<VideoPost>
   void _initVideoPlayer() async {
     await _videoPlayerController.initialize(); //initialize를 해줘야한다.
     await _videoPlayerController.setLooping(true);
-    setState(() {
-      //build method가 VideoPlayerController가 initialize된것과 플레이 된것을 알게해주려고
-    });
+    if (kIsWeb) {
+      //web이면 소리를 0으로 만든다.
+      await _videoPlayerController.setVolume(0);
+    }
     _videoPlayerController.addListener(() {
       //controller의 변화를 감지한다.
       _onVideoChange();
+    });
+    setState(() {
+      //build method가 VideoPlayerController가 initialize된것과 플레이 된것을 알게해주려고
     });
   }
 
@@ -137,6 +143,20 @@ class _VideoPostState extends State<VideoPost>
     setState(() {
       _isPaused = !_isPaused;
     });
+  }
+
+  void _onToggleVolume() {
+    if (_videoPlayerController.value.volume == 0) {
+      _videoPlayerController.setVolume(1);
+      setState(() {
+        _isMuted = false;
+      });
+    } else {
+      _videoPlayerController.setVolume(0);
+      setState(() {
+        _isMuted = true;
+      });
+    }
   }
 
   @override
@@ -245,6 +265,15 @@ class _VideoPostState extends State<VideoPost>
             child: Column(
               children: [
                 CircleAvatar(),
+                Gaps.v20,
+                GestureDetector(
+                  onTap: () => _onToggleVolume(),
+                  child: _isMuted
+                      ? VideoButton(
+                          icon: FontAwesomeIcons.volumeXmark, text: '')
+                      : VideoButton(
+                          icon: FontAwesomeIcons.volumeHigh, text: ''),
+                ),
                 Gaps.v20,
                 VideoButton(
                   icon: FontAwesomeIcons.solidHeart,
